@@ -25,6 +25,12 @@ def find_color(elevation):
     else: 
         return "purple"
 
+fgvolcano = folium.FeatureGroup( name = "Volcanos" )
+for lt, ln, el in zip(latitude, longitude, elevation):
+    fgvolcano.add_child(folium.CircleMarker(location = [lt, ln], radius = 8, popup = str(el)+ "mt.", 
+                                        fill_color= find_color(el),
+                                        color = "black", 
+                                        fill_opacity = 0.9))
 
 for lt, ln, nm, el in zip(latitude, longitude, name, elevation):
     fg.add_child(folium.Marker(location = [lt, ln], 
@@ -32,7 +38,19 @@ for lt, ln, nm, el in zip(latitude, longitude, name, elevation):
     #fill_color = find_color(el), #pass in CircleMarker after folium. to be able to use this 
     icon = folium.Icon(color = find_color(el))))
 
-fg.add_child(folium.GeoJson(data = open("world.json", "r", encoding="utf-8-sig").read())) #this shows the outlines in the map  
+fg.add_child(folium.GeoJson(data = open("world.json", "r", encoding="utf-8-sig").read(),
+                            style_function = lambda x: 
+                            {"fillColor":"yellow" 
+                            if x["properties"]["POP2005"] < 100000 
+                            else
+                            ("purple")
+                                if 100000 <= x["properties"]["POP2005"] < 900000 
+                                else 
+                                    ("red")
+                                }
+                                ))
+                             #this shows the outlines in the map  
+
 
 map.add_child(fg)
 
