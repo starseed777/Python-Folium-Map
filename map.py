@@ -38,18 +38,21 @@ for lt, ln, nm, el in zip(latitude, longitude, name, elevation):
     #fill_color = find_color(el), #pass in CircleMarker after folium. to be able to use this 
     icon = folium.Icon(color = find_color(el))))
 
-fg.add_child(folium.GeoJson(data = open("world.json", "r", encoding="utf-8-sig").read(),
-                            style_function = lambda x: 
-                            {"fillColor":"yellow" 
-                            if x["properties"]["POP2005"] < 100000 
-                            else
-                            ("purple")
-                                if 100000 <= x["properties"]["POP2005"] < 900000 
-                                else 
-                                    ("red")
+fgpopulation =folium.FeatureGroup (name ="Population")
+fgpopulation.add_child( folium.GeoJson ( data=open("world.json", "r", encoding="utf-8-sig" ).read(),
+                               style_function= lambda x:
+                               {"fillColor":"yellow"
+                               if x["properties"]["POP2005"] < 10000000
+                               else
+                                    ("purple"
+                                    if  10000000 <= x["properties"]["POP2005"] < 90000000
+                                    else "red")
                                 }
                                 ))
-                             #this shows the outlines in the map  
+
+map.add_child(fgvolcano)
+map.add_child(fgpopulation)
+map.add_child(folium.LayerControl())
 
 
 map.add_child(fg)
